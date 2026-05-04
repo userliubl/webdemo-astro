@@ -1,0 +1,17 @@
+---
+import Section from "./Section.astro";
+import MemberCard from "./MemberCard.astro";
+import { people } from "@/data/site";
+---
+<Section id="people" title="团队成员" eyebrow="People" hasAction>
+  <a
+    slot="action"
+    href="/team/"
+    class="inline-flex rounded border border-imu-brand/20 bg-white/90 px-4 py-2 text-sm font-medium text-imu-brand-deep transition hover:border-imu-highlight/60 hover:text-imu-brand"
+  >
+    了解更多
+  </a>
+  <ul class="grid gap-4 sm:grid-cols-2">
+    {people.map((person) => <MemberCard person={person} />)}
+  </ul>
+</Section>

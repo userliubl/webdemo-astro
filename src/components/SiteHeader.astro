@@ -1,0 +1,261 @@
+---
+import { siteMeta } from "@/data/site";
+
+const nav = [
+  { id: "about", href: "/#about", label: "中心简介", hint: "了解研究中心定位与简介" },
+  { id: "research", href: "/#research", label: "研究方向", hint: "查看核心研究主题与布局" },
+  { id: "people", href: "/team/", label: "团队成员", hint: "查看组织结构与骨干成员" },
+  { id: "papers", href: "/works/", label: "论文和工作", hint: "查看论文成果与代表工作" },
+  { id: "footer", href: "/#footer", label: "联系合作", hint: "前往页脚查看联系方式" },
+];
+---
+<header
+  data-site-header
+  class="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 font-sans text-slate-900 antialiased backdrop-blur-md shadow-sm shadow-slate-200/40 transition-[box-shadow] duration-300"
+>
+  <div data-shell class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="flex h-[52px] items-center justify-between gap-3">
+      <a
+        href="/"
+        class="flex min-w-0 max-w-[min(100%,14rem)] items-center gap-2.5 text-slate-900 transition hover:text-imu-brand-deep active:scale-[0.99] sm:max-w-none sm:gap-3"
+        aria-label={`进入${siteMeta.title}首页`}
+      >
+        <img
+          src={siteMeta.logoSrc}
+          alt={siteMeta.logoAlt}
+          width="160"
+          height="48"
+          class="h-8 w-auto shrink-0 object-contain object-left sm:h-9"
+          fetchpriority="high"
+        />
+        <span
+          data-brand-text
+          class="truncate text-sm font-semibold tracking-tight transition-colors duration-200 sm:text-[15px] sm:leading-snug"
+        >
+          {siteMeta.title}
+        </span>
+      </a>
+
+      <div data-menu-wrap class="relative shrink-0">
+        <button
+          type="button"
+          data-menu-toggle
+          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 transition duration-300 hover:scale-105 hover:border-imu-highlight/40 hover:bg-slate-50 motion-reduce:hover:scale-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          aria-expanded="false"
+          aria-controls="site-nav-dropdown"
+          aria-haspopup="true"
+          aria-label="主导航菜单（桌面端悬停展开，触屏可点击切换）"
+        >
+          <svg
+            data-menu-icon
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden
+            class="transition-transform duration-300"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+          </svg>
+        </button>
+
+        <div
+          id="site-nav-dropdown"
+          data-menu-panel
+          aria-hidden="true"
+          inert
+          class="pointer-events-none absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity"
+        >
+          <nav class="flex flex-col gap-1" aria-label="页面导航">
+            {nav.map((item) => (
+              <a
+                href={item.href}
+                data-nav-id={item.id}
+                class="group flex origin-left items-start justify-between gap-3 rounded-xl px-3 py-3 text-slate-800 outline-none transition duration-200 hover:scale-[1.02] hover:bg-slate-50 active:bg-slate-100 motion-reduce:hover:scale-100 motion-reduce:transition-colors focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+              >
+                <div class="min-w-0">
+                  <div class="text-sm font-semibold text-slate-900">{item.label}</div>
+                  <div class="mt-1 text-xs leading-relaxed text-slate-500 transition group-hover:text-slate-600">
+                    {item.hint}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  if (header) {
+    const shell = header.querySelector<HTMLElement>("[data-shell]");
+    const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
+    const toggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+    const panel = header.querySelector<HTMLElement>("[data-menu-panel]");
+    const icon = header.querySelector<SVGElement>("[data-menu-icon]");
+    const navItems = Array.from(
+      header.querySelectorAll<HTMLAnchorElement>("[data-nav-id]"),
+    );
+
+    let menuOpen = false;
+    let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const fineHover = () =>
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    const setMenuOpen = (next: boolean) => {
+      menuOpen = next;
+      if (!toggle || !panel || !icon) return;
+      toggle.setAttribute("aria-expanded", String(next));
+      panel.setAttribute("aria-hidden", String(!next));
+      if (next) {
+        panel.removeAttribute("inert");
+        panel.classList.remove(
+          "pointer-events-none",
+          "-translate-y-2",
+          "scale-[0.92]",
+          "opacity-0",
+        );
+        panel.classList.add("translate-y-0", "scale-100", "opacity-100");
+        toggle.classList.remove(
+          "border-slate-300/90",
+          "bg-white",
+          "hover:border-imu-highlight/40",
+          "hover:bg-slate-50",
+        );
+        toggle.classList.add(
+          "border-imu-highlight/50",
+          "bg-imu-50",
+          "shadow-md",
+          "shadow-imu-brand/10",
+        );
+        icon.classList.add("rotate-90");
+      } else {
+        panel.setAttribute("inert", "");
+        panel.classList.add(
+          "pointer-events-none",
+          "-translate-y-2",
+          "scale-[0.92]",
+          "opacity-0",
+        );
+        panel.classList.remove("translate-y-0", "scale-100", "opacity-100");
+        toggle.classList.add(
+          "border-slate-300/90",
+          "bg-white",
+          "hover:border-imu-highlight/40",
+          "hover:bg-slate-50",
+        );
+        toggle.classList.remove(
+          "border-imu-highlight/50",
+          "bg-imu-50",
+          "shadow-md",
+          "shadow-imu-brand/10",
+        );
+        icon.classList.remove("rotate-90");
+      }
+    };
+
+    const clearHover = () => {
+      if (hoverCloseTimer) {
+        clearTimeout(hoverCloseTimer);
+        hoverCloseTimer = null;
+      }
+    };
+
+    toggle?.addEventListener("click", () => {
+      clearHover();
+      setMenuOpen(!menuOpen);
+    });
+
+    wrap?.addEventListener("mouseenter", () => {
+      if (!fineHover()) return;
+      clearHover();
+      setMenuOpen(true);
+    });
+    wrap?.addEventListener("mouseleave", () => {
+      if (!fineHover()) return;
+      clearHover();
+      hoverCloseTimer = setTimeout(() => setMenuOpen(false), 160);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menuOpen) setMenuOpen(false);
+    });
+    document.addEventListener("pointerdown", (e) => {
+      if (!menuOpen) return;
+      if (!shell?.contains(e.target as Node)) setMenuOpen(false);
+    });
+    navItems.forEach((a) =>
+      a.addEventListener("click", (e) => {
+        clearHover();
+        setMenuOpen(false);
+        const href = a.getAttribute("href") || "";
+        if (href.startsWith("/#") && location.pathname === "/") {
+          e.preventDefault();
+          const id = href.slice(2);
+          history.pushState(null, "", href);
+          requestAnimationFrame(() => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const headerH = header.getBoundingClientRect().height || 52;
+            const padTop =
+              parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) ||
+              headerH;
+            const offset = Math.max(headerH, padTop);
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+          });
+        }
+      }),
+    );
+
+    const baseShadow = "shadow-sm shadow-slate-200/40";
+    const scrolledShadow = "shadow-md shadow-slate-300/35";
+    const updateScrollState = () => {
+      const isScrolled = window.scrollY > 6;
+      header.classList.toggle("shadow-md", isScrolled);
+      header.classList.toggle("shadow-slate-300/35", isScrolled);
+      header.classList.toggle("shadow-sm", !isScrolled);
+      header.classList.toggle("shadow-slate-200/40", !isScrolled);
+    };
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+
+    const updateActive = () => {
+      if (location.pathname !== "/") return;
+      const padTop =
+        parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 52;
+      const y = window.scrollY + padTop;
+      let current: string | null = null;
+      if (window.scrollY >= 72) {
+        for (const a of navItems) {
+          const id = a.getAttribute("data-nav-id");
+          if (!id) continue;
+          const el = document.getElementById(id);
+          if (el) {
+            const top = el.getBoundingClientRect().top + window.scrollY;
+            if (top <= y) current = id;
+          }
+        }
+      }
+      navItems.forEach((a) => {
+        const id = a.getAttribute("data-nav-id");
+        const active = id === current;
+        a.classList.toggle("bg-imu-50", active);
+        a.classList.toggle("text-imu-950", active);
+        a.classList.toggle("ring-1", active);
+        a.classList.toggle("ring-imu-highlight/45", active);
+      });
+    };
+    updateActive();
+    window.addEventListener("scroll", updateActive, { passive: true });
+    window.addEventListener("resize", updateActive, { passive: true });
+    void baseShadow;
+    void scrolledShadow;
+  }
+</script>

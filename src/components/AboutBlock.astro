@@ -1,0 +1,9 @@
+---
+import Section from "./Section.astro";
+import { about } from "@/data/site";
+---
+<Section id="about" title={about.title} eyebrow="About">
+  <div class="space-y-5 text-pretty leading-relaxed text-slate-600 sm:text-lg">
+    {about.paragraphs.map((p) => <p>{p}</p>)}
+  </div>
+</Section>
