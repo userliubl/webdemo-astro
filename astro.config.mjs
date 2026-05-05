@@ -3,7 +3,7 @@ import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
   output: "static",
-  base: "/astro",
+  base: process.env.ASTRO_BASE || "/",
   trailingSlash: "always",
   integrations: [tailwind({ applyBaseStyles: false })],
 });
