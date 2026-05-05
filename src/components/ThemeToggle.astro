@@ -30,16 +30,18 @@
   };
 
   function initThemeToggle() {
-    /* re-query every time — DOM may be new after View Transitions */
     const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-    btn?.addEventListener("click", () => {
+    if (!btn) return;
+    /* remove old listener via clone to avoid duplicates on re-init */
+    const clone = btn.cloneNode(true) as HTMLButtonElement;
+    btn.replaceWith(clone);
+    clone.addEventListener("click", () => {
       const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
       apply(next);
     });
   }
 
-  /* apply theme preference once on first load (inline script in <head> also does this) */
-  apply(getPref());
+  /* theme already applied by inline <head> script — just bind toggle */
   initThemeToggle();
   document.addEventListener("astro:page-load", initThemeToggle);
 </script>
