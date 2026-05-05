@@ -268,7 +268,7 @@ const isEn = lang === "en";
       a.addEventListener("click", (e) => {
         e.preventDefault();
         clearHover();
-        setMenuOpen(false);
+        // 先导航再关闭菜单，避免移动端 unlockBodyScroll 的 scrollTo 打断用户手势导致导航失效
         window.location.assign(a.href);
       }),
     );
