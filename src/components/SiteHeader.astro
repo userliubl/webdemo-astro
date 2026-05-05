@@ -8,8 +8,6 @@ const isEn = lang === "en";
 ---
 <header
   data-site-header
-  transition:name="site-header"
-  transition:animate="none"
   class="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 font-sans text-slate-900 antialiased backdrop-blur-md shadow-sm shadow-slate-200/40 transition-[box-shadow] duration-300 dark:border-slate-700/90 dark:bg-slate-900/90 dark:text-slate-100 dark:shadow-slate-950/30"
 >
   <div data-shell class="mx-auto max-w-5xl px-4 sm:px-6">
@@ -119,6 +117,14 @@ const isEn = lang === "en";
 <script>
   const header = document.querySelector<HTMLElement>("[data-site-header]");
   if (header) {
+    /* clean up stale state from previous page (View Transitions) */
+    const stale = document.getElementById("menu-backdrop");
+    if (stale) stale.remove();
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    document.body.style.overflowY = "";
+
     const shell = header.querySelector<HTMLElement>("[data-shell]");
     const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
     const toggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
