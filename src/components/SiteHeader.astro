@@ -18,7 +18,7 @@ const isEn = lang === "en";
         aria-label={`${ui.enterHome}${siteMeta.title}`}
       >
         <img
-          src={siteMeta.logoSrc}
+          src={`${import.meta.env.BASE_URL}${siteMeta.logoSrc.replace(/^\//, "")}`}
           alt={siteMeta.logoAlt}
           width="502"
           height="100"
@@ -70,7 +70,7 @@ const isEn = lang === "en";
           <nav class="flex flex-col gap-1" aria-label={ui.pageNavAria}>
             {nav.map((item) => (
               <a
-                href={item.href}
+                href={`${import.meta.env.BASE_URL}${item.href.replace(/^\//, "")}`}
                 data-nav-id={item.id}
                 class="group flex origin-left items-start justify-between gap-3 rounded-xl px-3 py-3 text-slate-800 outline-none transition duration-200 hover:scale-[1.02] hover:bg-slate-50 active:bg-slate-100 motion-reduce:hover:scale-100 motion-reduce:transition-colors focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-700/60 dark:active:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
               >
