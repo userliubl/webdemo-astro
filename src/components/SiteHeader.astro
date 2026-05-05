@@ -120,7 +120,7 @@ const isEn = lang === "en";
   let scrollListenersReady = false;
 
   const fineHover = () =>
-    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    window.matchMedia("(min-width: 768px) and (hover: hover) and (pointer: fine)").matches;
 
   /* ------ scroll lock ------ */
   const lockBodyScroll = () => {
@@ -137,7 +137,9 @@ const isEn = lang === "en";
     document.body.style.width = "";
     document.body.style.overflowY = "";
     if (top) {
-      window.scrollTo({ top: -parseFloat(top), behavior: "instant" as ScrollBehavior });
+      // "instant" is not a standard ScrollBehavior value in some mobile browsers.
+      // Use the default jump scroll to avoid runtime errors on first interaction.
+      window.scrollTo({ top: -parseFloat(top), behavior: "auto" });
     }
   };
 
@@ -200,12 +202,20 @@ const isEn = lang === "en";
     const header = getHeader();
     if (!header) return;
     const shell = header.querySelector<HTMLElement>("[data-shell]");
-    const toggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+    const originalToggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
     const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
     const navItems = Array.from(header.querySelectorAll<HTMLAnchorElement>("[data-nav-id]"));
+    if (originalToggle) {
+      const toggleClone = originalToggle.cloneNode(true) as HTMLButtonElement;
+      originalToggle.replaceWith(toggleClone);
+    }
+    const toggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
 
     /* toggle */
-    toggle?.addEventListener("click", () => { clearHover(); setMenuOpen(!menuOpen); });
+    toggle?.addEventListener("click", () => {
+      clearHover();
+      setMenuOpen(!menuOpen);
+    });
 
     /* desktop hover */
     wrap?.addEventListener("mouseenter", () => {
