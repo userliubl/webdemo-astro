@@ -85,28 +85,28 @@ const isEn = lang === "en";
           </nav>
           <div class="mt-2 border-t border-slate-200 px-3 pt-2.5 dark:border-slate-700">
             <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-0.5 text-[11px] font-semibold dark:bg-slate-700">
-              <a
-                href={import.meta.env.BASE_URL}
-                data-lang-switch
+              <button
+                type="button"
+                data-lang-zh
+                onclick="window.location.href = (window.APP_BASE_URL || '/').replace(/\/$/, '') || '/'"
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   !isEn
                     ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
                 aria-label="切换到中文"
-                aria-current={!isEn ? "page" : undefined}
-              >中</a>
-              <a
-                href={`${import.meta.env.BASE_URL}en/`}
-                data-lang-switch
+              >中</button>
+              <button
+                type="button"
+                data-lang-en
+                onclick="window.location.href = ((window.APP_BASE_URL || '/').replace(/\/$/, '') || '/') + '/en/'"
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   isEn
                     ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
                 aria-label="Switch to English"
-                aria-current={isEn ? "page" : undefined}
-              >EN</a>
+              >EN</button>
             </div>
           </div>
         </div>
@@ -117,6 +117,9 @@ const isEn = lang === "en";
 </header>
 
 <script>
+  // 在全局作用域设置 BASE_URL，供 onclick 处理使用
+  (window as any).APP_BASE_URL = import.meta.env.BASE_URL || "/";
+
   let menuOpen = false;
   let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
   let scrollListenersReady = false;
@@ -262,8 +265,8 @@ const isEn = lang === "en";
       }),
     );
 
-    /* language switches: 不进行任何 JS 拦截，让链接正常工作 */
-    // 移除所有事件处理，让 href 属性自然导航
+    /* language switches: pure HTML onclick handler, no JS interference */
+    // 移到 onclick 属性中处理，避免任何 JS 逻辑干扰
 
     /* scroll shadow & active section */
     const updateScrollState = () => {
