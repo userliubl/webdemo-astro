@@ -1,5 +1,6 @@
 ---
 import { getLangFromPath, getSiteData } from "@/data/site";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 
 const lang = getLangFromPath(Astro.url.pathname);
 const { siteMeta, nav, ui } = getSiteData(lang);
@@ -7,13 +8,15 @@ const isEn = lang === "en";
 ---
 <header
   data-site-header
-  class="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 font-sans text-slate-900 antialiased backdrop-blur-md shadow-sm shadow-slate-200/40 transition-[box-shadow] duration-300"
+  transition:name="site-header"
+  transition:animate="none"
+  class="sticky top-0 z-50 border-b border-slate-200/90 bg-white/95 font-sans text-slate-900 antialiased backdrop-blur-md shadow-sm shadow-slate-200/40 transition-[box-shadow] duration-300 dark:border-slate-700/90 dark:bg-slate-900/90 dark:text-slate-100 dark:shadow-slate-950/30"
 >
   <div data-shell class="mx-auto max-w-5xl px-4 sm:px-6">
     <div class="flex h-[52px] items-center justify-between gap-3">
       <a
         href="/"
-        class="flex min-w-0 max-w-[min(100%,14rem)] items-center gap-2.5 text-slate-900 transition hover:text-imu-brand-deep active:scale-[0.99] sm:max-w-none sm:gap-3"
+        class="flex min-w-0 max-w-[min(100%,14rem)] items-center gap-2.5 text-slate-900 transition hover:text-imu-brand-deep active:scale-[0.99] sm:max-w-none sm:gap-3 dark:text-slate-100 dark:hover:text-imu-400"
         aria-label={`${ui.enterHome}${siteMeta.title}`}
       >
         <img
@@ -32,11 +35,13 @@ const isEn = lang === "en";
         </span>
       </a>
 
-      <div data-menu-wrap class="relative shrink-0">
+      <div class="flex items-center gap-2">
+        <ThemeToggle />
+        <div data-menu-wrap class="relative shrink-0">
         <button
           type="button"
           data-menu-toggle
-          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 transition duration-300 hover:scale-105 hover:border-imu-highlight/40 hover:bg-slate-50 motion-reduce:hover:scale-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 transition duration-300 hover:scale-105 hover:border-imu-highlight/40 hover:bg-slate-50 motion-reduce:hover:scale-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-imu-highlight/40 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
           aria-expanded="false"
           aria-controls="site-nav-dropdown"
           aria-haspopup="true"
@@ -62,32 +67,32 @@ const isEn = lang === "en";
           data-menu-panel
           aria-hidden="true"
           inert
-          class="pointer-events-none absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity"
+          class="pointer-events-none absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:shadow-slate-950/40"
         >
           <nav class="flex flex-col gap-1" aria-label={ui.pageNavAria}>
             {nav.map((item) => (
               <a
                 href={item.href}
                 data-nav-id={item.id}
-                class="group flex origin-left items-start justify-between gap-3 rounded-xl px-3 py-3 text-slate-800 outline-none transition duration-200 hover:scale-[1.02] hover:bg-slate-50 active:bg-slate-100 motion-reduce:hover:scale-100 motion-reduce:transition-colors focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                class="group flex origin-left items-start justify-between gap-3 rounded-xl px-3 py-3 text-slate-800 outline-none transition duration-200 hover:scale-[1.02] hover:bg-slate-50 active:bg-slate-100 motion-reduce:hover:scale-100 motion-reduce:transition-colors focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:text-slate-200 dark:hover:bg-slate-700/60 dark:active:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
               >
                 <div class="min-w-0">
-                  <div class="text-sm font-semibold text-slate-900">{item.label}</div>
-                  <div class="mt-1 text-xs leading-relaxed text-slate-500 transition group-hover:text-slate-600">
+                  <div class="text-sm font-semibold text-slate-900 dark:text-slate-100">{item.label}</div>
+                  <div class="mt-1 text-xs leading-relaxed text-slate-500 transition group-hover:text-slate-600 dark:text-slate-400 dark:group-hover:text-slate-300">
                     {item.hint}
                   </div>
                 </div>
               </a>
             ))}
           </nav>
-          <div class="mt-2 border-t border-slate-200 px-3 pt-2.5">
-            <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-0.5 text-[11px] font-semibold">
+          <div class="mt-2 border-t border-slate-200 px-3 pt-2.5 dark:border-slate-700">
+            <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-0.5 text-[11px] font-semibold dark:bg-slate-700">
               <a
                 href="/"
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   !isEn
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
                 aria-label="切换到中文"
                 aria-current={!isEn ? "page" : undefined}
@@ -96,8 +101,8 @@ const isEn = lang === "en";
                 href="/en/"
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   isEn
-                    ? "bg-white text-slate-900 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
                 aria-label="Switch to English"
                 aria-current={isEn ? "page" : undefined}
@@ -105,6 +110,7 @@ const isEn = lang === "en";
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>

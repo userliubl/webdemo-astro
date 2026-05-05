@@ -12,29 +12,30 @@ const { papers, papersSection } = getSiteData(lang);
   >
     {papersSection.more}
   </a>
-  <ol class="space-y-4">
+  <ol class="space-y-4 list-none [counter-reset:paper]" data-reveal-stagger>
     {papers.map((paper, index) => (
-      <li class="relative rounded-lg border border-slate-200 bg-white p-5 shadow-card transition duration-200 hover:z-10 hover:scale-[1.02] hover:border-imu-highlight/50 motion-reduce:hover:scale-100 sm:p-6">
+      <li
+        data-reveal
+        class="relative rounded-lg border border-slate-200 bg-white p-5 shadow-card transition duration-200 hover:z-10 hover:scale-[1.02] hover:border-imu-highlight/50 motion-reduce:hover:scale-100 sm:p-6 dark:border-slate-700 dark:bg-slate-800/90 dark:shadow-slate-950/20 dark:hover:border-slate-500 [counter-increment:paper]"
+      >
         <div class="flex flex-wrap items-start gap-3">
-          <span class="mt-0.5 font-mono text-xs text-imu-brand/40 tabular-nums">
-            {String(index + 1).padStart(2, "0")}
-          </span>
+          <span class="mt-0.5 font-mono text-xs text-imu-brand/40 tabular-nums dark:text-imu-400/50 before:content-[counter(paper,decimal-leading-zero)]" aria-hidden></span>
           <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
               {paper.tag && (
-                <span class="rounded border border-imu-highlight/35 bg-imu-50 px-2 py-0.5 text-xs font-medium text-imu-brand-deep">
+                <span class="rounded border border-imu-highlight/35 bg-imu-50 px-2 py-0.5 text-xs font-medium text-imu-brand-deep dark:border-imu-highlight/25 dark:bg-imu-900/40 dark:text-imu-300">
                   {paper.tag}
                 </span>
               )}
-              <span class="text-xs text-slate-500">{paper.venue} · {paper.year}</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400">{paper.venue} · {paper.year}</span>
             </div>
-            <h3 class="mt-2 text-base font-medium leading-snug text-slate-900 sm:text-lg">
+            <h3 class="mt-2 text-base font-medium leading-snug text-slate-900 sm:text-lg dark:text-slate-100">
               {paper.link ? (
                 <a
                   href={paper.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-imu-brand-deep underline decoration-imu-highlight/40 underline-offset-[5px] transition hover:text-imu-brand hover:decoration-imu-highlight"
+                  class="text-imu-brand-deep underline decoration-imu-highlight/40 underline-offset-[5px] transition hover:text-imu-brand hover:decoration-imu-highlight dark:text-imu-400 dark:hover:text-imu-300"
                 >
                   {paper.title}
                 </a>
@@ -42,7 +43,7 @@ const { papers, papersSection } = getSiteData(lang);
                 paper.title
               )}
             </h3>
-            <p class="mt-2 text-sm text-slate-600">{paper.authors}</p>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400">{paper.authors}</p>
           </div>
         </div>
       </li>

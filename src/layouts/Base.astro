@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from "astro:transitions";
 import "@/styles/global.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import BackToTop from "@/components/BackToTop.astro";
@@ -26,10 +27,38 @@ const desc = description ?? siteMeta.description;
     <meta property="og:description" content={desc} />
     <meta property="og:type" content="website" />
     <link rel="icon" href="/logos/image.png" />
+    <ViewTransitions />
+    <!-- prevent dark-mode flash -->
+    <script is:inline>
+      (() => {
+        const t = localStorage.getItem("theme-preference");
+        const d = t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", d);
+      })();
+    </script>
   </head>
   <body class="min-h-screen font-sans antialiased">
     <SiteHeader />
     <slot />
     <BackToTop />
+    <!-- scroll-reveal observer -->
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("revealed");
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -30px 0px" },
+      );
+      document.querySelectorAll("[data-reveal]").forEach((el) => observer.observe(el));
+      /* re-scan after Astro page swaps */
+      document.addEventListener("astro:page-load", () => {
+        document.querySelectorAll("[data-reveal]:not(.revealed)").forEach((el) => observer.observe(el));
+      });
+    </script>
   </body>
 </html>

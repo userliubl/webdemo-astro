@@ -5,7 +5,7 @@ const lang = getLangFromPath(Astro.url.pathname);
 const { about } = getSiteData(lang);
 ---
 <Section id="about" title={about.title} eyebrow={about.eyebrow}>
-  <div class="space-y-5 text-pretty leading-relaxed text-slate-600 sm:text-lg">
+  <div class="space-y-5 text-pretty leading-relaxed text-slate-600 sm:text-lg dark:text-slate-300">
     {about.paragraphs.map((p) => <p>{p}</p>)}
   </div>
 </Section>

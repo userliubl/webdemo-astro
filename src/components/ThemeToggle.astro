@@ -1,0 +1,47 @@
+<button
+  type="button"
+  data-theme-toggle
+  aria-label="Toggle dark mode"
+  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-imu-highlight/30 hover:text-imu-brand dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-imu-highlight/40 dark:hover:text-imu-400"
+>
+  <!-- sun icon (shown in dark mode) -->
+  <svg data-theme-icon="dark" class="h-4.5 w-4.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke-linecap="round" />
+  </svg>
+  <!-- moon icon (shown in light mode) -->
+  <svg data-theme-icon="light" class="h-4.5 w-4.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden>
+    <path d="M20 14.12A7.78 7.78 0 0112.06 6 7.76 7.76 0 002 12a7.82 7.82 0 0010.94 6.88" stroke-linecap="round" />
+  </svg>
+</button>
+
+<script>
+  const STORAGE_KEY = "theme-preference";
+
+  const getPref = (): "dark" | "light" => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "dark" || stored === "light") return stored;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const apply = (theme: "dark" | "light") => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem(STORAGE_KEY, theme);
+  };
+
+  /* apply on load before paint */
+  apply(getPref());
+
+  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  btn?.addEventListener("click", () => {
+    const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+    apply(next);
+  });
+</script>
+
+<style is:global>
+  /* prevent flash on page load */
+  html.dark {
+    color-scheme: dark;
+  }
+</style>

@@ -11,9 +11,9 @@ const { id, title, eyebrow, variant = "light", hasAction = false } = Astro.props
 const isBrand = variant === "brand";
 const shell = isBrand
   ? "relative border-b border-white/10 bg-brand-photo bg-cover bg-center px-4 py-14 sm:px-6 sm:py-16"
-  : "relative border-b border-slate-200/80 bg-slate-50/78 px-4 py-14 backdrop-blur-[2px] sm:px-6 sm:py-16";
-const eyebrowCls = isBrand ? "text-white/65" : "text-imu-brand-deep";
-const titleCls = isBrand ? "text-white" : "text-slate-900";
+  : "relative border-b border-slate-200/80 bg-slate-50/78 px-4 py-14 backdrop-blur-[2px] sm:px-6 sm:py-16 dark:border-slate-700/80 dark:bg-slate-900/60";
+const eyebrowCls = isBrand ? "text-white/65" : "text-imu-brand-deep dark:text-imu-400";
+const titleCls = isBrand ? "text-white" : "text-slate-900 dark:text-slate-100";
 const barCls = isBrand ? "border-l-[3px] border-white/90" : "border-l-[3px] border-imu-highlight";
 ---
 <section id={id} class={shell}>
