@@ -1,5 +1,7 @@
 ---
-import { hero } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
+const lang = getLangFromPath(Astro.url.pathname);
+const { hero } = getSiteData(lang);
 ---
 <section
   id="top"
@@ -11,19 +13,19 @@ import { hero } from "@/data/site";
   <div class="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_65%)]" aria-hidden></div>
   <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/15 to-transparent" aria-hidden></div>
   <div class="relative mx-auto max-w-3xl text-center">
-    <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-white/75 sm:text-sm">{hero.titleEn}</p>
+    <p class="mb-3 font-mono text-xs uppercase tracking-[0.18em] text-white/75 sm:text-sm">{hero.titleSub}</p>
     <h1 class="text-3xl font-bold tracking-tight text-white drop-shadow-sm sm:text-4xl md:text-[2.6rem] md:leading-tight">
-      {hero.titleZh}
+      {hero.titleMain}
     </h1>
     <p class="mx-auto mt-6 max-w-2xl text-pretty text-sm leading-relaxed text-white/90 sm:text-base">
       {hero.subtitle}
     </p>
     <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
       <a href="#people" class="inline-flex rounded border border-white px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-white/10">
-        认识团队
+        {hero.ctaPeople}
       </a>
       <a href="#papers" class="inline-flex rounded bg-imu-highlight px-5 py-2.5 text-sm font-medium text-white shadow-md transition hover:brightness-110">
-        论文成果
+        {hero.ctaPapers}
       </a>
     </div>
   </div>

@@ -1,13 +1,11 @@
 ---
-import { siteMeta } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
 
-const nav = [
-  { id: "about", href: "/#about", label: "中心简介", hint: "了解研究中心定位与简介" },
-  { id: "research", href: "/#research", label: "研究方向", hint: "查看核心研究主题与布局" },
-  { id: "people", href: "/team/", label: "团队成员", hint: "查看组织结构与骨干成员" },
-  { id: "papers", href: "/works/", label: "论文和工作", hint: "查看论文成果与代表工作" },
-  { id: "footer", href: "/#footer", label: "联系合作", hint: "前往页脚查看联系方式" },
-];
+const lang = getLangFromPath(Astro.url.pathname);
+const { siteMeta, nav, ui } = getSiteData(lang);
+const isEn = lang === "en";
+const langSwitchHref = isEn ? "/" : "/en/";
+const langSwitchLabel = isEn ? "中文" : "EN";
 ---
 <header
   data-site-header
@@ -18,7 +16,7 @@ const nav = [
       <a
         href="/"
         class="flex min-w-0 max-w-[min(100%,14rem)] items-center gap-2.5 text-slate-900 transition hover:text-imu-brand-deep active:scale-[0.99] sm:max-w-none sm:gap-3"
-        aria-label={`进入${siteMeta.title}首页`}
+        aria-label={`${ui.enterHome}${siteMeta.title}`}
       >
         <img
           src={siteMeta.logoSrc}
@@ -36,6 +34,13 @@ const nav = [
         </span>
       </a>
 
+      <a
+        href={langSwitchHref}
+        class="inline-flex h-9 items-center justify-center rounded-md border border-slate-300/90 px-2.5 text-xs font-semibold text-slate-700 transition hover:border-imu-highlight/50 hover:text-imu-brand-deep"
+        aria-label={isEn ? "切换到中文" : "Switch to English"}
+      >
+        {langSwitchLabel}
+      </a>
       <div data-menu-wrap class="relative shrink-0">
         <button
           type="button"
@@ -44,7 +49,7 @@ const nav = [
           aria-expanded="false"
           aria-controls="site-nav-dropdown"
           aria-haspopup="true"
-          aria-label="主导航菜单（桌面端悬停展开，触屏可点击切换）"
+          aria-label={ui.menuAria}
         >
           <svg
             data-menu-icon
@@ -68,7 +73,7 @@ const nav = [
           inert
           class="pointer-events-none absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity"
         >
-          <nav class="flex flex-col gap-1" aria-label="页面导航">
+          <nav class="flex flex-col gap-1" aria-label={ui.pageNavAria}>
             {nav.map((item) => (
               <a
                 href={item.href}
@@ -195,9 +200,9 @@ const nav = [
         clearHover();
         setMenuOpen(false);
         const href = a.getAttribute("href") || "";
-        if (href.startsWith("/#") && location.pathname === "/") {
+        if ((href.startsWith("/#") || href.startsWith("/en/#")) && (location.pathname === "/" || location.pathname === "/en/")) {
           e.preventDefault();
-          const id = href.slice(2);
+          const id = href.split("#")[1] || "";
           history.pushState(null, "", href);
           requestAnimationFrame(() => {
             const el = document.getElementById(id);
@@ -227,7 +232,7 @@ const nav = [
     window.addEventListener("scroll", updateScrollState, { passive: true });
 
     const updateActive = () => {
-      if (location.pathname !== "/") return;
+      if (location.pathname !== "/" && location.pathname !== "/en/") return;
       const padTop =
         parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 52;
       const y = window.scrollY + padTop;

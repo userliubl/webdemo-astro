@@ -2,18 +2,20 @@
 import "@/styles/global.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import BackToTop from "@/components/BackToTop.astro";
-import { siteMeta } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
 
 interface Props {
   title?: string;
   description?: string;
 }
 const { title, description } = Astro.props;
+const lang = getLangFromPath(Astro.url.pathname);
+const { siteMeta } = getSiteData(lang);
 const fullTitle = title ? `${title} · ${siteMeta.title}` : siteMeta.title;
 const desc = description ?? siteMeta.description;
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang={lang === "en" ? "en" : "zh-CN"}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

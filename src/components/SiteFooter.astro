@@ -1,5 +1,7 @@
 ---
-import { footer, siteMeta } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
+const lang = getLangFromPath(Astro.url.pathname);
+const { footer, siteMeta, footerLabels } = getSiteData(lang);
 const year = new Date().getFullYear();
 ---
 <footer
@@ -12,19 +14,19 @@ const year = new Date().getFullYear();
         <h3 class="mb-4 text-sm font-semibold tracking-wide text-white">{footer.headline}</h3>
         <ul class="space-y-3 text-sm leading-relaxed">
           <li>
-            <span class="text-white">地址</span>
+            <span class="text-white">{footerLabels.address}</span>
             <p class="mt-0.5 text-white">{footer.address}</p>
           </li>
           <li>
-            <span class="text-white">邮编</span>
+            <span class="text-white">{footerLabels.postalCode}</span>
             <p class="mt-0.5 text-white">{footer.postalCode}</p>
           </li>
           <li>
-            <span class="text-white">电话</span>
+            <span class="text-white">{footerLabels.phone}</span>
             <p class="mt-0.5 text-white">{footer.phone}</p>
           </li>
           <li>
-            <span class="text-white">邮箱</span>
+            <span class="text-white">{footerLabels.email}</span>
             <p class="mt-0.5">
               <a href={`mailto:${footer.email}`} class="text-white underline-offset-2 hover:text-white/85 hover:underline">
                 {footer.email}
@@ -32,7 +34,7 @@ const year = new Date().getFullYear();
             </p>
           </li>
           <li>
-            <span class="text-white">办公时间</span>
+            <span class="text-white">{footerLabels.officeHours}</span>
             <p class="mt-0.5 text-white">{footer.officeHours}</p>
           </li>
         </ul>
@@ -40,7 +42,7 @@ const year = new Date().getFullYear();
       </div>
 
       <div>
-        <h3 class="mb-4 text-sm font-semibold tracking-wide text-white">相关链接</h3>
+        <h3 class="mb-4 text-sm font-semibold tracking-wide text-white">{footerLabels.links}</h3>
         <ul class="space-y-2.5 text-sm">
           {footer.relatedLinks.map((link) => (
             <li>
@@ -56,16 +58,16 @@ const year = new Date().getFullYear();
           ))}
         </ul>
         <p class="mt-6 text-xs leading-relaxed text-white">
-          本站为静态展示页面，技术栈：Astro · 部署：任意静态托管。内容可在
+          {footerLabels.staticNote}
           <code class="rounded bg-white/5 px-1 py-0.5 font-mono text-[11px] text-white">src/data/site.ts</code>
-          中维护。
+          {lang === "en" ? "." : "中维护。"}
         </p>
       </div>
 
       <div class="sm:col-span-2 lg:col-span-1">
-        <h3 class="mb-4 text-sm font-semibold tracking-wide text-white">关于本站</h3>
+        <h3 class="mb-4 text-sm font-semibold tracking-wide text-white">{footerLabels.aboutSite}</h3>
         <p class="text-sm leading-relaxed text-white">{siteMeta.description}</p>
-        <p class="mt-4 text-xs text-white">关键词：{siteMeta.keywords.join(" · ")}</p>
+        <p class="mt-4 text-xs text-white">{footerLabels.keywords}：{siteMeta.keywords.join(" · ")}</p>
       </div>
     </div>
 
@@ -73,7 +75,7 @@ const year = new Date().getFullYear();
       <p class="text-sm text-white">
         © {year} {siteMeta.title}
         <span class="mx-2 text-white">|</span>
-        <span class="text-white">蒙ICP备xxxxxxxx号（示例）</span>
+        <span class="text-white">{footerLabels.icp}</span>
       </p>
       <p class="font-mono text-xs text-white">Astro static</p>
     </div>

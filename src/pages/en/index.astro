@@ -1,0 +1,23 @@
+---
+import Base from "@/layouts/Base.astro";
+import AmbientBackground from "@/components/AmbientBackground.astro";
+import Hero from "@/components/Hero.astro";
+import AboutBlock from "@/components/AboutBlock.astro";
+import ResearchGrid from "@/components/ResearchGrid.astro";
+import TeamGrid from "@/components/TeamGrid.astro";
+import PaperList from "@/components/PaperList.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+---
+<Base>
+  <div class="relative isolate min-h-screen overflow-x-clip bg-transparent">
+    <AmbientBackground />
+    <main class="relative">
+      <Hero />
+      <AboutBlock />
+      <ResearchGrid />
+      <TeamGrid />
+      <PaperList />
+    </main>
+    <SiteFooter />
+  </div>
+</Base>

@@ -1,14 +1,16 @@
 ---
 import Section from "./Section.astro";
-import { papers } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
+const lang = getLangFromPath(Astro.url.pathname);
+const { papers, papersSection } = getSiteData(lang);
 ---
-<Section id="papers" title="论文和工作" eyebrow="Publications & Work" hasAction>
+<Section id="papers" title={papersSection.title} eyebrow={papersSection.eyebrow} hasAction>
   <a
     slot="action"
-    href="/works/"
+    href="#papers"
     class="inline-flex rounded border border-imu-brand/20 bg-white/90 px-4 py-2 text-sm font-medium text-imu-brand-deep transition hover:border-imu-highlight/60 hover:text-imu-brand"
   >
-    更多
+    {papersSection.more}
   </a>
   <ol class="space-y-4">
     {papers.map((paper, index) => (

@@ -1,8 +1,10 @@
 ---
 import Section from "./Section.astro";
-import { about } from "@/data/site";
+import { getLangFromPath, getSiteData } from "@/data/site";
+const lang = getLangFromPath(Astro.url.pathname);
+const { about } = getSiteData(lang);
 ---
-<Section id="about" title={about.title} eyebrow="About">
+<Section id="about" title={about.title} eyebrow={about.eyebrow}>
   <div class="space-y-5 text-pretty leading-relaxed text-slate-600 sm:text-lg">
     {about.paragraphs.map((p) => <p>{p}</p>)}
   </div>

@@ -1,10 +1,6 @@
 /**
  * 静态站点文案与列表，可直接改此文件更新展示内容。
- *
- * 中心客观事实参考：百度百科「内蒙古大学时空智能研究中心」词条。
- * 由于公开信息中未列具体研究人员、论文清单与联系方式，
- * 本文件中的 `people`、`papers`、`teamOrganization`、`footer` 联系方式等
- * 仍为示例占位，待中心官方信息补充后替换。
+ * 中英双语支持：通过 pathname 是否以 /en 开头自动切换。
  */
 
 export type Person = {
@@ -39,66 +35,87 @@ export type ResearchGroup = {
   href?: string;
 };
 
-export const siteMeta = {
-  title: "内蒙古大学时空智能研究中心",
-  description:
-    "内蒙古大学时空智能研究中心，由内蒙古大学与呼和浩特经济技术开发区共建，面向智慧生态、边防、能源、交通、应急等区域应用场景，融合卫星导航、遥感、地理信息、大数据与人工智能等前沿技术。",
-  keywords: [
-    "内蒙古大学",
-    "时空智能",
-    "人工智能",
-    "遥感",
-    "地理信息",
-    "卫星导航",
-    "区域协同创新",
-  ],
-  /** 顶栏左上角 logo，文件放在 public/logos/ 下，改路径即可 */
-  logoSrc: "/logos/image.png",
-  logoAlt: "内蒙古大学时空智能研究中心",
+export type Lang = "zh" | "en";
+
+type SiteContent = {
+  siteMeta: {
+    title: string;
+    description: string;
+    keywords: string[];
+    logoSrc: string;
+    logoAlt: string;
+  };
+  hero: {
+    titleMain: string;
+    titleSub: string;
+    subtitle: string;
+    ctaPeople: string;
+    ctaPapers: string;
+  };
+  about: {
+    title: string;
+    eyebrow: string;
+    paragraphs: string[];
+  };
+  researchAreas: {
+    title: string;
+    eyebrow: string;
+    more: string;
+    items: { name: string; summary: string }[];
+  };
+  team: {
+    title: string;
+    eyebrow: string;
+    more: string;
+  };
+  papersSection: {
+    title: string;
+    eyebrow: string;
+    more: string;
+  };
+  footerLabels: {
+    address: string;
+    postalCode: string;
+    phone: string;
+    email: string;
+    officeHours: string;
+    links: string;
+    aboutSite: string;
+    keywords: string;
+    staticNote: string;
+    icp: string;
+  };
+  nav: Array<{ id: string; href: string; label: string; hint: string }>;
+  ui: {
+    enterHome: string;
+    menuAria: string;
+    pageNavAria: string;
+    backToTop: string;
+  };
+  people: Person[];
+  papers: Paper[];
+  works: WorkItem[];
+  teamOrganization: {
+    title: string;
+    intro: string;
+    chiefScientist: Person & { note: string };
+    committee: Person[];
+    faculty: Person[];
+    groups: ResearchGroup[];
+  };
+  footer: {
+    headline: string;
+    email: string;
+    address: string;
+    postalCode: string;
+    phone: string;
+    officeHours: string;
+    note: string;
+    relatedLinks: { label: string; href: string }[];
+  };
 };
 
-export const hero = {
-  titleZh: "内蒙古大学时空智能研究中心",
-  titleEn: "IMU · Spatiotemporal Intelligence Research Center",
-  subtitle:
-    "聚智时空 · 联创未来。以时空智能技术驱动区域高质量发展，融合卫星导航、遥感、地理信息、大数据与人工智能等交叉前沿，服务智慧生态、边防、能源、交通、应急等内蒙古特色应用场景。",
-};
-
-export const about = {
-  title: "中心简介",
-  paragraphs: [
-    "内蒙古大学时空智能研究中心成立于 2025 年 12 月 15 日，由内蒙古大学与呼和浩特经济技术开发区联合主办，内蒙古大学人工智能学院与呼和浩特留学人员创业服务中心联合承办，是面向时空智能领域研究与产业落地的科研机构。",
-    "中心以「时空智能技术驱动区域高质量发展」为核心导向，融合卫星导航、遥感、地理信息、大数据与人工智能等前沿技术，聚焦内蒙古在智慧生态、边防、能源、交通、应急等领域的特色应用场景，推动政产学研用协同创新。",
-    "中心同步建设「内蒙古大学时空智能研究中心成果转化基地」，并联合呼和浩特留学人员创业服务中心设立「鸿雁人才」专家工作站，打通从科研到产业、从实验室到生产线的全链条通道。",
-  ],
-};
-
-export const researchAreas = {
-  title: "研究方向",
-  items: [
-    {
-      name: "遥感与地理信息智能解译",
-      summary:
-        "面向遥感影像与多源地理信息数据，研究语义分割、目标识别与时空变化检测，支撑生态、能源与边防场景。",
-    },
-    {
-      name: "时空大数据与多模态分析",
-      summary:
-        "融合卫星导航、传感网络与城市数据，研究多模态人群分析、轨迹建模与时空预测方法。",
-    },
-    {
-      name: "无人机与基础设施智能巡检",
-      summary:
-        "结合机器视觉、智能控制与边缘计算，构建面向能源、交通等关键基础设施的智能巡检方案。",
-    },
-  ],
-};
-
-/**
- * 人员列表为示例占位，等待中心官方公布后替换。
- * 已根据中心实际研究方向调整 focus 描述，避免与真实方向脱节。
- */
-export const people: Person[] = [
+const peopleZh: Person[] = [
   {
     name: "示例 一",
     role: "中心负责人",
@@ -126,17 +143,17 @@ export const people: Person[] = [
   },
 ];
 
-export const teamOrganization = {
+const teamOrganizationZh = {
   title: "组织结构",
   intro:
     "中心由内蒙古大学与呼和浩特经济技术开发区共建，由内蒙古大学人工智能学院承办。下文按首席科学家、中心学术委员会、研究骨干与研究小组分层呈现学术分工与协作结构（具体人员信息以中心官方公布为准）。",
   chiefScientist: {
-    ...people[0],
+    ...peopleZh[0],
     note:
       "负责中心总体学术方向规划与重大项目统筹，统领时空智能技术研究、成果转化基地建设及校地协同创新事务。",
   },
-  committee: [people[1], people[2]],
-  faculty: people,
+  committee: [peopleZh[1], peopleZh[2]],
+  faculty: peopleZh,
   groups: [
     {
       name: "遥感与地理信息智能",
@@ -159,10 +176,7 @@ export const teamOrganization = {
   ] satisfies ResearchGroup[],
 };
 
-/**
- * 论文列表为示例占位，等待中心官方公布或学术成果检索补充后替换。
- */
-export const papers: Paper[] = [
+const papersZh: Paper[] = [
   {
     title: "面向遥感图像解译的时空智能方法（示例）",
     authors: "中心团队（待补充）",
@@ -186,11 +200,7 @@ export const papers: Paper[] = [
   },
 ];
 
-/**
- * 代表工作：基于成立仪式上正式发布的三项技术成果。
- * 来源：百度百科「内蒙古大学时空智能研究中心」词条。
- */
-export const works: WorkItem[] = [
+const worksZh: WorkItem[] = [
   {
     title: "多模态人群分析",
     summary:
@@ -214,8 +224,7 @@ export const works: WorkItem[] = [
   },
 ];
 
-/** 页脚联系区与友情链接等，修改此处即可同步全站底部信息 */
-export const footer = {
+const footerZh = {
   headline: "联系与合作",
   /** 中心未公开统一对外邮箱，先以学校域名占位，待官方公布后替换 */
   email: "contact@imu.edu.cn",
@@ -235,3 +244,379 @@ export const footer = {
     },
   ],
 };
+
+const enContent: SiteContent = {
+  siteMeta: {
+    title: "IMU Spatiotemporal Intelligence Research Center",
+    description:
+      "Jointly established by Inner Mongolia University and Hohhot Economic and Technological Development Zone, the center focuses on regional applications in ecology, border security, energy, transportation, and emergency response by integrating GNSS, remote sensing, GIS, big data, and AI.",
+    keywords: [
+      "Inner Mongolia University",
+      "Spatiotemporal Intelligence",
+      "Artificial Intelligence",
+      "Remote Sensing",
+      "GIS",
+      "GNSS",
+      "Regional Innovation",
+    ],
+    logoSrc: "/logos/image.png",
+    logoAlt: "IMU Spatiotemporal Intelligence Research Center",
+  },
+  hero: {
+    titleMain: "IMU Spatiotemporal Intelligence Research Center",
+    titleSub: "IMU · Spatiotemporal Intelligence Research Center",
+    subtitle:
+      "Advancing regional development through spatiotemporal intelligence. We integrate GNSS, remote sensing, GIS, big data, and AI to support ecology, border security, energy, transportation, and emergency-response scenarios.",
+    ctaPeople: "Meet the Team",
+    ctaPapers: "Publications",
+  },
+  about: {
+    title: "About the Center",
+    eyebrow: "About",
+    paragraphs: [
+      "Founded on December 15, 2025, the IMU Spatiotemporal Intelligence Research Center is jointly initiated by Inner Mongolia University and Hohhot Economic and Technological Development Zone, and co-organized by the School of Artificial Intelligence of IMU and Hohhot Overseas Talent Entrepreneurship Service Center.",
+      "With a mission to drive high-quality regional development through spatiotemporal intelligence, the center combines GNSS, remote sensing, GIS, big data, and AI, and focuses on practical scenarios across ecology, border security, energy, transportation, and emergency response.",
+      "The center also develops an outcomes transformation base and an expert workstation, building an end-to-end pathway from research to industrial application.",
+    ],
+  },
+  researchAreas: {
+    title: "Research Areas",
+    eyebrow: "Research",
+    more: "See More",
+    items: [
+      {
+        name: "Intelligent Remote Sensing and GIS Interpretation",
+        summary:
+          "We study semantic segmentation, object detection, and spatiotemporal change analysis on remote sensing and geospatial data for ecology, energy, and border applications.",
+      },
+      {
+        name: "Spatiotemporal Big Data and Multimodal Analytics",
+        summary:
+          "We integrate GNSS, sensor networks, and urban data to develop methods for multimodal crowd analytics, trajectory modeling, and forecasting.",
+      },
+      {
+        name: "UAV-based Intelligent Infrastructure Inspection",
+        summary:
+          "Combining computer vision, intelligent control, and edge computing, we build UAV inspection solutions for critical energy and transportation infrastructure.",
+      },
+    ],
+  },
+  team: {
+    title: "Team",
+    eyebrow: "People",
+    more: "Learn More",
+  },
+  papersSection: {
+    title: "Publications & Work",
+    eyebrow: "Publications & Work",
+    more: "More",
+  },
+  footerLabels: {
+    address: "Address",
+    postalCode: "Postal Code",
+    phone: "Phone",
+    email: "Email",
+    officeHours: "Office Hours",
+    links: "Related Links",
+    aboutSite: "About This Site",
+    keywords: "Keywords",
+    staticNote:
+      "This is a static showcase site built with Astro. Content is maintained in",
+    icp: "ICP Filing xxxxxxxx (demo)",
+  },
+  nav: [
+    { id: "about", href: "/en/#about", label: "About", hint: "Center profile and mission" },
+    { id: "research", href: "/en/#research", label: "Research", hint: "Core topics and layout" },
+    { id: "people", href: "/en/#people", label: "People", hint: "Team members and roles" },
+    { id: "papers", href: "/en/#papers", label: "Publications", hint: "Papers and major outcomes" },
+    { id: "footer", href: "/en/#footer", label: "Contact", hint: "Contact details in footer" },
+  ],
+  ui: {
+    enterHome: "Go to homepage",
+    menuAria: "Main navigation menu",
+    pageNavAria: "Page navigation",
+    backToTop: "Back to top",
+  },
+  people: [
+    {
+      name: "Example One",
+      role: "Director",
+      title: "Professor (TBD)",
+      focus: "Spatiotemporal Intelligence · Regional Collaboration",
+      email: "contact@imu.edu.cn",
+    },
+    {
+      name: "Example Two",
+      role: "Deputy Director",
+      title: "Research Fellow (TBD)",
+      focus: "Remote Sensing Interpretation · Multimodal Analytics",
+    },
+    {
+      name: "Example Three",
+      role: "Core Researcher",
+      title: "Associate Professor (TBD)",
+      focus: "Spatiotemporal Big Data · Crowd Analytics",
+    },
+    {
+      name: "Example Four",
+      role: "Core Researcher",
+      title: "Assistant Professor (TBD)",
+      focus: "UAV Inspection · Edge Computing",
+    },
+  ],
+  teamOrganization: {
+    title: "Organization",
+    intro:
+      "The center is jointly built by IMU and Hohhot ETDZ. The structure below presents academic responsibilities across chief scientist, committee, faculty, and research groups.",
+    chiefScientist: {
+      ...{
+        name: "Example One",
+        role: "Director",
+        title: "Professor (TBD)",
+        focus: "Spatiotemporal Intelligence · Regional Collaboration",
+        email: "contact@imu.edu.cn",
+      },
+      note:
+        "Responsible for overall academic strategy, major project coordination, and industry-academia collaboration.",
+    },
+    committee: [
+      {
+        name: "Example Two",
+        role: "Deputy Director",
+        title: "Research Fellow (TBD)",
+        focus: "Remote Sensing Interpretation · Multimodal Analytics",
+      },
+      {
+        name: "Example Three",
+        role: "Core Researcher",
+        title: "Associate Professor (TBD)",
+        focus: "Spatiotemporal Big Data · Crowd Analytics",
+      },
+    ],
+    faculty: [
+      {
+        name: "Example One",
+        role: "Director",
+        title: "Professor (TBD)",
+        focus: "Spatiotemporal Intelligence · Regional Collaboration",
+        email: "contact@imu.edu.cn",
+      },
+      {
+        name: "Example Two",
+        role: "Deputy Director",
+        title: "Research Fellow (TBD)",
+        focus: "Remote Sensing Interpretation · Multimodal Analytics",
+      },
+      {
+        name: "Example Three",
+        role: "Core Researcher",
+        title: "Associate Professor (TBD)",
+        focus: "Spatiotemporal Big Data · Crowd Analytics",
+      },
+      {
+        name: "Example Four",
+        role: "Core Researcher",
+        title: "Assistant Professor (TBD)",
+        focus: "UAV Inspection · Edge Computing",
+      },
+    ],
+    groups: [
+      {
+        name: "Remote Sensing and GIS Intelligence",
+        summary:
+          "Research on remote sensing interpretation and geospatial analytics for ecology, border security, and energy scenarios.",
+        leads: ["Example Two"],
+      },
+      {
+        name: "Spatiotemporal Big Data and Multimodal Analytics",
+        summary:
+          "Modeling and analytics for regional governance using multimodal and spatiotemporal data.",
+        leads: ["Example Three"],
+      },
+      {
+        name: "UAV and Intelligent Infrastructure Inspection",
+        summary:
+          "UAV perception, intelligent inspection, and edge systems for critical infrastructure.",
+        leads: ["Example Four"],
+      },
+    ],
+  },
+  papers: [
+    {
+      title: "Spatiotemporal Intelligence Methods for Remote Sensing Interpretation (Example)",
+      authors: "Center Team (TBD)",
+      venue: "Conference / Journal (TBD)",
+      year: 2025,
+      tag: "Remote Sensing",
+    },
+    {
+      title: "Multimodal Crowd Analytics for Regional Governance (Example)",
+      authors: "Center Team (TBD)",
+      venue: "Conference / Journal (TBD)",
+      year: 2025,
+      tag: "Big Data",
+    },
+    {
+      title: "UAV Vision and Intelligent Sensing for Infrastructure Inspection (Example)",
+      authors: "Center Team (TBD)",
+      venue: "Conference / Journal (TBD)",
+      year: 2025,
+      tag: "Inspection",
+    },
+  ],
+  works: [
+    {
+      title: "Multimodal Crowd Analytics",
+      summary:
+        "Multimodal analytics across video, sensors, and spatiotemporal data for public safety and emergency management.",
+      year: 2025,
+      category: "Outcome",
+    },
+    {
+      title: "Intelligent UAV Infrastructure Inspection",
+      summary:
+        "Autonomous UAV inspection and recognition for critical energy and transportation infrastructure.",
+      year: 2025,
+      category: "Outcome",
+    },
+    {
+      title: "Remote Sensing Image Interpretation",
+      summary:
+        "Semantic segmentation, object detection, and change analysis for ecological, energy, and border scenarios.",
+      year: 2025,
+      category: "Outcome",
+    },
+  ],
+  footer: {
+    headline: "Contact & Collaboration",
+    email: "contact@imu.edu.cn",
+    address:
+      "No. 235 University West Street, Saihan District, Hohhot, Inner Mongolia (office location subject to official announcement)",
+    postalCode: "010021",
+    phone: "0471-0000000 (demo, TBD)",
+    officeHours: "Weekdays 09:00-12:00, 14:00-17:00 (demo)",
+    note:
+      "For collaboration, media, and recruitment inquiries, please use the same email and include your purpose in the subject.",
+    relatedLinks: [
+      { label: "Inner Mongolia University", href: "https://www.imu.edu.cn/" },
+      { label: "School of Computer Science, IMU", href: "https://ccs.imu.edu.cn/" },
+      { label: "Hohhot ETDZ", href: "http://hetdz.huhhot.gov.cn/" },
+    ],
+  },
+};
+
+const zhContent: SiteContent = {
+  siteMeta: {
+    title: "内蒙古大学时空智能研究中心",
+    description:
+      "内蒙古大学时空智能研究中心，由内蒙古大学与呼和浩特经济技术开发区共建，面向智慧生态、边防、能源、交通、应急等区域应用场景，融合卫星导航、遥感、地理信息、大数据与人工智能等前沿技术。",
+    keywords: [
+      "内蒙古大学",
+      "时空智能",
+      "人工智能",
+      "遥感",
+      "地理信息",
+      "卫星导航",
+      "区域协同创新",
+    ],
+    logoSrc: "/logos/image.png",
+    logoAlt: "内蒙古大学时空智能研究中心",
+  },
+  hero: {
+    titleMain: "内蒙古大学时空智能研究中心",
+    titleSub: "IMU · Spatiotemporal Intelligence Research Center",
+    subtitle:
+      "聚智时空 · 联创未来。以时空智能技术驱动区域高质量发展，融合卫星导航、遥感、地理信息、大数据与人工智能等交叉前沿，服务智慧生态、边防、能源、交通、应急等内蒙古特色应用场景。",
+    ctaPeople: "认识团队",
+    ctaPapers: "论文成果",
+  },
+  about: {
+    title: "中心简介",
+    eyebrow: "About",
+    paragraphs: [
+      "内蒙古大学时空智能研究中心成立于 2025 年 12 月 15 日，由内蒙古大学与呼和浩特经济技术开发区联合主办，内蒙古大学人工智能学院与呼和浩特留学人员创业服务中心联合承办，是面向时空智能领域研究与产业落地的科研机构。",
+      "中心以「时空智能技术驱动区域高质量发展」为核心导向，融合卫星导航、遥感、地理信息、大数据与人工智能等前沿技术，聚焦内蒙古在智慧生态、边防、能源、交通、应急等领域的特色应用场景，推动政产学研用协同创新。",
+      "中心同步建设「内蒙古大学时空智能研究中心成果转化基地」，并联合呼和浩特留学人员创业服务中心设立「鸿雁人才」专家工作站，打通从科研到产业、从实验室到生产线的全链条通道。",
+    ],
+  },
+  researchAreas: {
+    title: "研究方向",
+    eyebrow: "Research",
+    more: "查看更多",
+    items: [
+      {
+        name: "遥感与地理信息智能解译",
+        summary:
+          "面向遥感影像与多源地理信息数据，研究语义分割、目标识别与时空变化检测，支撑生态、能源与边防场景。",
+      },
+      {
+        name: "时空大数据与多模态分析",
+        summary:
+          "融合卫星导航、传感网络与城市数据，研究多模态人群分析、轨迹建模与时空预测方法。",
+      },
+      {
+        name: "无人机与基础设施智能巡检",
+        summary:
+          "结合机器视觉、智能控制与边缘计算，构建面向能源、交通等关键基础设施的智能巡检方案。",
+      },
+    ],
+  },
+  team: {
+    title: "团队成员",
+    eyebrow: "People",
+    more: "了解更多",
+  },
+  papersSection: {
+    title: "论文和工作",
+    eyebrow: "Publications & Work",
+    more: "更多",
+  },
+  footerLabels: {
+    address: "地址",
+    postalCode: "邮编",
+    phone: "电话",
+    email: "邮箱",
+    officeHours: "办公时间",
+    links: "相关链接",
+    aboutSite: "关于本站",
+    keywords: "关键词",
+    staticNote: "本站为静态展示页面，技术栈：Astro · 部署：任意静态托管。内容可在",
+    icp: "蒙ICP备xxxxxxxx号（示例）",
+  },
+  nav: [
+    { id: "about", href: "/#about", label: "中心简介", hint: "了解研究中心定位与简介" },
+    { id: "research", href: "/#research", label: "研究方向", hint: "查看核心研究主题与布局" },
+    { id: "people", href: "/#people", label: "团队成员", hint: "查看组织结构与骨干成员" },
+    { id: "papers", href: "/#papers", label: "论文和工作", hint: "查看论文成果与代表工作" },
+    { id: "footer", href: "/#footer", label: "联系合作", hint: "前往页脚查看联系方式" },
+  ],
+  ui: {
+    enterHome: "进入首页",
+    menuAria: "主导航菜单（桌面端悬停展开，触屏可点击切换）",
+    pageNavAria: "页面导航",
+    backToTop: "回到顶部",
+  },
+  people: peopleZh,
+  teamOrganization: teamOrganizationZh,
+  papers: papersZh,
+  works: worksZh,
+  footer: footerZh,
+};
+
+export const defaultLang: Lang = "zh";
+
+export const getLangFromPath = (pathname: string): Lang =>
+  pathname.startsWith("/en") ? "en" : "zh";
+
+export const getSiteData = (lang: Lang): SiteContent =>
+  lang === "en" ? enContent : zhContent;
+
+export const siteMeta = zhContent.siteMeta;
+export const hero = zhContent.hero;
+export const about = zhContent.about;
+export const researchAreas = zhContent.researchAreas;
+export const people = zhContent.people;
+export const teamOrganization = zhContent.teamOrganization;
+export const papers = zhContent.papers;
+export const works = zhContent.works;
+export const footer = zhContent.footer;
