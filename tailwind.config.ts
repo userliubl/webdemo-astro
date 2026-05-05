@@ -45,11 +45,11 @@ const config: Config = {
         "grid-on-brand":
           "linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)",
         "hero-imu":
-          "linear-gradient(155deg, rgba(4,107,167,0.86) 0%, rgba(4,107,167,0.92) 100%), url('/background/bg.avif')",
+          `linear-gradient(155deg, rgba(4,107,167,0.86) 0%, rgba(4,107,167,0.92) 100%), url('/astro/background/bg.avif')`,
         "brand-photo":
-          "linear-gradient(180deg, rgba(4,107,167,0.88), rgba(4,107,167,0.94)), url('/background/bg.avif')",
+          `linear-gradient(180deg, rgba(4,107,167,0.88), rgba(4,107,167,0.94)), url('/astro/background/bg.avif')`,
         "brand-darker-photo":
-          "linear-gradient(180deg, rgba(2,71,114,0.93), rgba(2,71,114,0.97)), url('/background/bg.avif')",
+          `linear-gradient(180deg, rgba(2,71,114,0.93), rgba(2,71,114,0.97)), url('/astro/background/bg.avif')`,
       },
       boxShadow: {
         card: "0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04)",
