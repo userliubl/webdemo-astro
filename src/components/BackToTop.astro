@@ -7,9 +7,9 @@ const { ui } = getSiteData(lang);
   type="button"
   data-back-to-top
   aria-label={ui.backToTop}
-  class="pointer-events-none fixed bottom-6 right-6 z-[60] flex h-11 w-11 translate-y-2 items-center justify-center rounded-full border border-white/20 bg-imu-highlight text-white opacity-0 shadow-lg shadow-imu-brand-deep/25 transition hover:brightness-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 dark:shadow-imu-brand/30 dark:focus-visible:ring-offset-slate-900 sm:bottom-8 sm:right-8"
+  class="pointer-events-none fixed bottom-6 right-6 z-[60] flex h-12 w-12 translate-y-3 items-center justify-center rounded-full border-0 bg-gradient-to-br from-imu-400 to-imu-brand text-white opacity-0 shadow-lg shadow-imu-brand/30 transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-imu-brand/40 hover:from-imu-300 hover:to-imu-highlight focus:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 dark:from-imu-400 dark:to-imu-300 dark:text-slate-900 dark:shadow-imu-400/25 dark:hover:from-imu-300 dark:hover:to-imu-200 dark:focus-visible:ring-offset-slate-900 sm:bottom-8 sm:right-8"
 >
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden>
     <path d="M6 14l6-6 6 6" stroke-linecap="round" stroke-linejoin="round"></path>
   </svg>
 </button>
@@ -21,7 +21,7 @@ const { ui } = getSiteData(lang);
     const update = () => {
       const visible = window.scrollY > SHOW_AFTER;
       btn.classList.toggle("opacity-0", !visible);
-      btn.classList.toggle("translate-y-2", !visible);
+      btn.classList.toggle("translate-y-3", !visible);
       btn.classList.toggle("pointer-events-none", !visible);
       btn.classList.toggle("opacity-100", visible);
       btn.classList.toggle("translate-y-0", visible);
