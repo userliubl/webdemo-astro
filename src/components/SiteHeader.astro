@@ -87,6 +87,7 @@ const isEn = lang === "en";
             <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-0.5 text-[11px] font-semibold dark:bg-slate-700">
               <a
                 href={import.meta.env.BASE_URL}
+                data-lang-switch
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   !isEn
                     ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
@@ -97,6 +98,7 @@ const isEn = lang === "en";
               >中</a>
               <a
                 href={`${import.meta.env.BASE_URL}en/`}
+                data-lang-switch
                 class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
                   isEn
                     ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
@@ -205,6 +207,7 @@ const isEn = lang === "en";
     const originalToggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
     const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
     const navItems = Array.from(header.querySelectorAll<HTMLAnchorElement>("[data-nav-id]"));
+    const langSwitches = Array.from(header.querySelectorAll<HTMLAnchorElement>("[data-lang-switch]"));
     if (originalToggle) {
       const toggleClone = originalToggle.cloneNode(true) as HTMLButtonElement;
       originalToggle.replaceWith(toggleClone);
@@ -257,6 +260,16 @@ const isEn = lang === "en";
             });
           });
         }
+      }),
+    );
+
+    /* language switches: force hard navigation for mobile/cloud hosting reliability */
+    langSwitches.forEach((a) =>
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        clearHover();
+        setMenuOpen(false);
+        window.location.assign(a.href);
       }),
     );
 
