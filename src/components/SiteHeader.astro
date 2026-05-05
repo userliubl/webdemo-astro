@@ -128,12 +128,45 @@ const isEn = lang === "en";
     const fineHover = () =>
       window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
+    /* ------ scroll lock ------ */
+    const lockBodyScroll = () => {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflowY = "scroll";
+    };
+    const unlockBodyScroll = () => {
+      const top = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
+      if (top) {
+        window.scrollTo({ top: -parseFloat(top), behavior: "instant" as ScrollBehavior });
+      }
+    };
+
     const setMenuOpen = (next: boolean) => {
       menuOpen = next;
       if (!toggle || !panel || !icon) return;
       toggle.setAttribute("aria-expanded", String(next));
       panel.setAttribute("aria-hidden", String(!next));
       if (next) {
+        /* close-on-outside backdrop */
+        let backdrop = document.getElementById("menu-backdrop");
+        if (!backdrop) {
+          backdrop = document.createElement("div");
+          backdrop.id = "menu-backdrop";
+          backdrop.className =
+            "fixed inset-0 z-40 bg-slate-950/15 backdrop-blur-[1px]";
+          backdrop.setAttribute("aria-hidden", "true");
+          document.body.appendChild(backdrop);
+        }
+        backdrop.style.display = "block";
+
+        lockBodyScroll();
+
         panel.removeAttribute("inert");
         panel.classList.remove(
           "pointer-events-none",
@@ -156,6 +189,12 @@ const isEn = lang === "en";
         );
         icon.classList.add("rotate-90");
       } else {
+        /* remove backdrop */
+        const backdrop = document.getElementById("menu-backdrop");
+        if (backdrop) backdrop.style.display = "none";
+
+        unlockBodyScroll();
+
         panel.setAttribute("inert", "");
         panel.classList.add(
           "pointer-events-none",
@@ -187,11 +226,13 @@ const isEn = lang === "en";
       }
     };
 
+    /* ------ toggle button ------ */
     toggle?.addEventListener("click", () => {
       clearHover();
       setMenuOpen(!menuOpen);
     });
 
+    /* ------ desktop hover ------ */
     wrap?.addEventListener("mouseenter", () => {
       if (!fineHover()) return;
       clearHover();
@@ -203,13 +244,30 @@ const isEn = lang === "en";
       hoverCloseTimer = setTimeout(() => setMenuOpen(false), 160);
     });
 
+    /* ------ Escape key ------ */
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && menuOpen) setMenuOpen(false);
     });
-    document.addEventListener("pointerdown", (e) => {
-      if (!menuOpen) return;
-      if (!shell?.contains(e.target as Node)) setMenuOpen(false);
-    });
+
+    /* ------ click outside (via backdrop) ------ */
+    document.addEventListener(
+      "pointerdown",
+      (e) => {
+        if (!menuOpen) return;
+        const target = e.target as HTMLElement;
+        /* close if click is on backdrop or outside shell entirely */
+        if (target.id === "menu-backdrop") {
+          setMenuOpen(false);
+          return;
+        }
+        if (!shell?.contains(target)) {
+          setMenuOpen(false);
+        }
+      },
+      { capture: true },
+    );
+
+    /* ------ click nav item → close + smooth scroll ------ */
     navItems.forEach((a) =>
       a.addEventListener("click", (e) => {
         clearHover();
@@ -219,21 +277,25 @@ const isEn = lang === "en";
           e.preventDefault();
           const id = href.split("#")[1] || "";
           history.pushState(null, "", href);
+          /* wait for body scroll unlock to settle */
           requestAnimationFrame(() => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const headerH = header.getBoundingClientRect().height || 52;
-            const padTop =
-              parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) ||
-              headerH;
-            const offset = Math.max(headerH, padTop);
-            const top = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+            requestAnimationFrame(() => {
+              const el = document.getElementById(id);
+              if (!el) return;
+              const headerH = header.getBoundingClientRect().height || 52;
+              const padTop =
+                parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) ||
+                headerH;
+              const offset = Math.max(headerH, padTop);
+              const top = el.getBoundingClientRect().top + window.scrollY - offset;
+              window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+            });
           });
         }
       }),
     );
 
+    /* ------ scroll / resize shadow & active section ------ */
     const baseShadow = "shadow-sm shadow-slate-200/40";
     const scrolledShadow = "shadow-md shadow-slate-300/35";
     const updateScrollState = () => {
