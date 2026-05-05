@@ -1,0 +1,19 @@
+{
+  "envId": "${CLOUDBASE_ENV_ID}",
+  "framework": {
+    "name": "astro",
+    "dist": "dist"
+  },
+  "hosting": {
+    "source": "dist",
+    "outputPath": "/",
+    "index": "index.html",
+    "routes": [
+      {
+        "path": "/**",
+        "target": "/index.html",
+        "statusCode": 200
+      }
+    ]
+  }
+}
