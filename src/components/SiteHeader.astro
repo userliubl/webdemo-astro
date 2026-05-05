@@ -4,8 +4,6 @@ import { getLangFromPath, getSiteData } from "@/data/site";
 const lang = getLangFromPath(Astro.url.pathname);
 const { siteMeta, nav, ui } = getSiteData(lang);
 const isEn = lang === "en";
-const langSwitchHref = isEn ? "/" : "/en/";
-const langSwitchLabel = isEn ? "中文" : "EN";
 ---
 <header
   data-site-header
@@ -34,13 +32,28 @@ const langSwitchLabel = isEn ? "中文" : "EN";
         </span>
       </a>
 
-      <a
-        href={langSwitchHref}
-        class="inline-flex h-9 items-center justify-center rounded-md border border-slate-300/90 px-2.5 text-xs font-semibold text-slate-700 transition hover:border-imu-highlight/50 hover:text-imu-brand-deep"
-        aria-label={isEn ? "切换到中文" : "Switch to English"}
-      >
-        {langSwitchLabel}
-      </a>
+      <div class="flex items-center gap-1.5 rounded-full bg-slate-100 p-0.5 text-xs font-semibold">
+        <a
+          href="/"
+          class={`inline-flex h-7 items-center justify-center rounded-full px-3 transition-all duration-200 ${
+            !isEn
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+          aria-label="切换到中文"
+          aria-current={!isEn ? "page" : undefined}
+        >中文</a>
+        <a
+          href="/en/"
+          class={`inline-flex h-7 items-center justify-center rounded-full px-3 transition-all duration-200 ${
+            isEn
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+          aria-label="Switch to English"
+          aria-current={isEn ? "page" : undefined}
+        >EN</a>
+      </div>
       <div data-menu-wrap class="relative shrink-0">
         <button
           type="button"
