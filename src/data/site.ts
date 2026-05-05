@@ -259,7 +259,7 @@ const enContent: SiteContent = {
       "GNSS",
       "Regional Innovation",
     ],
-    logoSrc: "/logos/image.png",
+    logoSrc: "/logos/imu-sirc.png",
     logoAlt: "IMU Spatiotemporal Intelligence Research Center",
   },
   hero: {
@@ -519,7 +519,7 @@ const zhContent: SiteContent = {
       "卫星导航",
       "区域协同创新",
     ],
-    logoSrc: "/logos/image.png",
+    logoSrc: "/logos/imu-sirc.png",
     logoAlt: "内蒙古大学时空智能研究中心",
   },
   hero: {
