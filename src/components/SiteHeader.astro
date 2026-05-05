@@ -40,7 +40,7 @@ const isEn = lang === "en";
         <button
           type="button"
           data-menu-toggle
-          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 transition duration-300 hover:scale-105 hover:border-imu-highlight/40 hover:bg-slate-50 motion-reduce:hover:scale-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-imu-highlight/40 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 transition duration-300 hover:scale-105 hover:border-imu-highlight/40 hover:bg-slate-50 motion-reduce:hover:scale-100 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-imu-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-imu-highlight/40 dark:hover:bg-slate-700 dark:focus-visible:ring-offset-slate-900 touch-manipulation"
           aria-expanded="false"
           aria-controls="site-nav-dropdown"
           aria-haspopup="true"
@@ -65,8 +65,7 @@ const isEn = lang === "en";
           id="site-nav-dropdown"
           data-menu-panel
           aria-hidden="true"
-          hidden
-          class="hidden absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:shadow-slate-950/40"
+          class="invisible pointer-events-none absolute right-0 top-[calc(100%-10px)] z-50 w-[min(21rem,calc(100vw-2rem))] origin-top-right -translate-y-2 scale-[0.92] rounded-2xl border border-slate-200 bg-white px-2.5 pb-2.5 pt-4 text-slate-900 opacity-0 shadow-2xl shadow-slate-400/25 transition duration-300 motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-opacity dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:shadow-slate-950/40"
         >
           <nav class="flex flex-col gap-1" aria-label={ui.pageNavAria}>
             {nav.map((item) => (
@@ -158,19 +157,19 @@ const isEn = lang === "en";
     toggle.setAttribute("aria-expanded", String(next));
     panel.setAttribute("aria-hidden", String(!next));
     if (next) {
-      panel.removeAttribute("hidden");
-      let backdrop = document.getElementById("menu-backdrop");
+      let backdrop = document.getElementById("menu-backdrop") as HTMLElement | null;
       if (!backdrop) {
         backdrop = document.createElement("div");
         backdrop.id = "menu-backdrop";
         backdrop.className = "fixed inset-0 z-40 bg-slate-950/15 backdrop-blur-[1px]";
         backdrop.setAttribute("aria-hidden", "true");
+        backdrop.addEventListener("click", () => setMenuOpen(false));
         document.body.appendChild(backdrop);
       }
       backdrop.style.display = "block";
       lockBodyScroll();
-      panel.classList.remove("hidden", "-translate-y-2", "scale-[0.92]", "opacity-0");
-      panel.classList.add("block", "translate-y-0", "scale-100", "opacity-100");
+      panel.classList.remove("invisible", "pointer-events-none", "-translate-y-2", "scale-[0.92]", "opacity-0");
+      panel.classList.add("visible", "pointer-events-auto", "translate-y-0", "scale-100", "opacity-100");
       toggle.classList.remove("border-slate-300/90", "bg-white", "hover:border-imu-highlight/40", "hover:bg-slate-50");
       toggle.classList.add("border-imu-highlight/50", "bg-imu-50", "shadow-md", "shadow-imu-brand/10");
       icon.classList.add("rotate-90");
@@ -178,9 +177,8 @@ const isEn = lang === "en";
       const backdrop = document.getElementById("menu-backdrop");
       if (backdrop) backdrop.style.display = "none";
       unlockBodyScroll();
-      panel.setAttribute("hidden", "");
-      panel.classList.add("hidden", "-translate-y-2", "scale-[0.92]", "opacity-0");
-      panel.classList.remove("block", "translate-y-0", "scale-100", "opacity-100");
+      panel.classList.add("invisible", "pointer-events-none", "-translate-y-2", "scale-[0.92]", "opacity-0");
+      panel.classList.remove("visible", "pointer-events-auto", "translate-y-0", "scale-100", "opacity-100");
       toggle.classList.add("border-slate-300/90", "bg-white", "hover:border-imu-highlight/40", "hover:bg-slate-50");
       toggle.classList.remove("border-imu-highlight/50", "bg-imu-50", "shadow-md", "shadow-imu-brand/10");
       icon.classList.remove("rotate-90");
@@ -296,20 +294,12 @@ const isEn = lang === "en";
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && menuOpen) setMenuOpen(false);
   });
-  document.addEventListener(
-    "pointerdown",
-    (e) => {
-      if (!menuOpen) return;
-      const target = e.target as HTMLElement;
-      if (target.id === "menu-backdrop") { setMenuOpen(false); return; }
-      const header = getHeader();
-      const shell = header?.querySelector<HTMLElement>("[data-shell]");
-      if (!shell?.contains(target)) setMenuOpen(false);
-    },
-    { capture: true },
-  );
 
   /* ── run ── */
-  initSiteHeader();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => initSiteHeader(), { once: true });
+  } else {
+    initSiteHeader();
+  }
   document.addEventListener("astro:page-load", initSiteHeader);
 </script>
