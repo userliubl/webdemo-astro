@@ -32,28 +32,6 @@ const isEn = lang === "en";
         </span>
       </a>
 
-      <div class="flex items-center gap-1.5 rounded-full bg-slate-100 p-0.5 text-xs font-semibold">
-        <a
-          href="/"
-          class={`inline-flex h-7 items-center justify-center rounded-full px-3 transition-all duration-200 ${
-            !isEn
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-          aria-label="切换到中文"
-          aria-current={!isEn ? "page" : undefined}
-        >中文</a>
-        <a
-          href="/en/"
-          class={`inline-flex h-7 items-center justify-center rounded-full px-3 transition-all duration-200 ${
-            isEn
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-          aria-label="Switch to English"
-          aria-current={isEn ? "page" : undefined}
-        >EN</a>
-      </div>
       <div data-menu-wrap class="relative shrink-0">
         <button
           type="button"
@@ -102,6 +80,30 @@ const isEn = lang === "en";
               </a>
             ))}
           </nav>
+          <div class="mt-2 border-t border-slate-200 px-3 pt-2.5">
+            <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-0.5 text-[11px] font-semibold">
+              <a
+                href="/"
+                class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
+                  !isEn
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+                aria-label="切换到中文"
+                aria-current={!isEn ? "page" : undefined}
+              >中</a>
+              <a
+                href="/en/"
+                class={`inline-flex h-6 items-center justify-center rounded-full px-2.5 transition-all duration-200 ${
+                  isEn
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+                aria-label="Switch to English"
+                aria-current={isEn ? "page" : undefined}
+              >EN</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
