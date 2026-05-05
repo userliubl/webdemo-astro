@@ -115,136 +115,96 @@ const isEn = lang === "en";
 </header>
 
 <script>
-  const header = document.querySelector<HTMLElement>("[data-site-header]");
-  if (header) {
-    /* clean up stale state from previous page (View Transitions) */
-    const stale = document.getElementById("menu-backdrop");
-    if (stale) stale.remove();
+  let menuOpen = false;
+  let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+  let scrollListenersReady = false;
+
+  const fineHover = () =>
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  /* ------ scroll lock ------ */
+  const lockBodyScroll = () => {
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflowY = "scroll";
+  };
+  const unlockBodyScroll = () => {
+    const top = document.body.style.top;
     document.body.style.position = "";
     document.body.style.top = "";
     document.body.style.width = "";
     document.body.style.overflowY = "";
+    if (top) {
+      window.scrollTo({ top: -parseFloat(top), behavior: "instant" as ScrollBehavior });
+    }
+  };
 
+  /* re-query header + shell on every init (DOM may be new after View Transitions) */
+  const getHeader = () => document.querySelector<HTMLElement>("[data-site-header]");
+
+  const setMenuOpen = (next: boolean) => {
+    menuOpen = next;
+    const toggle = getHeader()?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+    const panel = getHeader()?.querySelector<HTMLElement>("[data-menu-panel]");
+    const icon = getHeader()?.querySelector<SVGElement>("[data-menu-icon]");
+    if (!toggle || !panel || !icon) return;
+    toggle.setAttribute("aria-expanded", String(next));
+    panel.setAttribute("aria-hidden", String(!next));
+    if (next) {
+      let backdrop = document.getElementById("menu-backdrop");
+      if (!backdrop) {
+        backdrop = document.createElement("div");
+        backdrop.id = "menu-backdrop";
+        backdrop.className = "fixed inset-0 z-40 bg-slate-950/15 backdrop-blur-[1px]";
+        backdrop.setAttribute("aria-hidden", "true");
+        document.body.appendChild(backdrop);
+      }
+      backdrop.style.display = "block";
+      lockBodyScroll();
+      panel.removeAttribute("inert");
+      panel.classList.remove("pointer-events-none", "-translate-y-2", "scale-[0.92]", "opacity-0");
+      panel.classList.add("translate-y-0", "scale-100", "opacity-100");
+      toggle.classList.remove("border-slate-300/90", "bg-white", "hover:border-imu-highlight/40", "hover:bg-slate-50");
+      toggle.classList.add("border-imu-highlight/50", "bg-imu-50", "shadow-md", "shadow-imu-brand/10");
+      icon.classList.add("rotate-90");
+    } else {
+      const backdrop = document.getElementById("menu-backdrop");
+      if (backdrop) backdrop.style.display = "none";
+      unlockBodyScroll();
+      panel.setAttribute("inert", "");
+      panel.classList.add("pointer-events-none", "-translate-y-2", "scale-[0.92]", "opacity-0");
+      panel.classList.remove("translate-y-0", "scale-100", "opacity-100");
+      toggle.classList.add("border-slate-300/90", "bg-white", "hover:border-imu-highlight/40", "hover:bg-slate-50");
+      toggle.classList.remove("border-imu-highlight/50", "bg-imu-50", "shadow-md", "shadow-imu-brand/10");
+      icon.classList.remove("rotate-90");
+    }
+  };
+
+  const clearHover = () => {
+    if (hoverCloseTimer) { clearTimeout(hoverCloseTimer); hoverCloseTimer = null; }
+  };
+
+  /* ── init: bind element-specific listeners (re-run after View Transitions) ── */
+  function initSiteHeader() {
+    /* clean up stale backdrop from previous page */
+    const stale = document.getElementById("menu-backdrop");
+    if (stale) stale.remove();
+    unlockBodyScroll();
+    menuOpen = false;
+
+    const header = getHeader();
+    if (!header) return;
     const shell = header.querySelector<HTMLElement>("[data-shell]");
-    const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
     const toggle = header.querySelector<HTMLButtonElement>("[data-menu-toggle]");
-    const panel = header.querySelector<HTMLElement>("[data-menu-panel]");
-    const icon = header.querySelector<SVGElement>("[data-menu-icon]");
-    const navItems = Array.from(
-      header.querySelectorAll<HTMLAnchorElement>("[data-nav-id]"),
-    );
+    const wrap = header.querySelector<HTMLElement>("[data-menu-wrap]");
+    const navItems = Array.from(header.querySelectorAll<HTMLAnchorElement>("[data-nav-id]"));
 
-    let menuOpen = false;
-    let hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+    /* toggle */
+    toggle?.addEventListener("click", () => { clearHover(); setMenuOpen(!menuOpen); });
 
-    const fineHover = () =>
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-
-    /* ------ scroll lock ------ */
-    const lockBodyScroll = () => {
-      const scrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
-      document.body.style.overflowY = "scroll";
-    };
-    const unlockBodyScroll = () => {
-      const top = document.body.style.top;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflowY = "";
-      if (top) {
-        window.scrollTo({ top: -parseFloat(top), behavior: "instant" as ScrollBehavior });
-      }
-    };
-
-    const setMenuOpen = (next: boolean) => {
-      menuOpen = next;
-      if (!toggle || !panel || !icon) return;
-      toggle.setAttribute("aria-expanded", String(next));
-      panel.setAttribute("aria-hidden", String(!next));
-      if (next) {
-        /* close-on-outside backdrop */
-        let backdrop = document.getElementById("menu-backdrop");
-        if (!backdrop) {
-          backdrop = document.createElement("div");
-          backdrop.id = "menu-backdrop";
-          backdrop.className =
-            "fixed inset-0 z-40 bg-slate-950/15 backdrop-blur-[1px]";
-          backdrop.setAttribute("aria-hidden", "true");
-          document.body.appendChild(backdrop);
-        }
-        backdrop.style.display = "block";
-
-        lockBodyScroll();
-
-        panel.removeAttribute("inert");
-        panel.classList.remove(
-          "pointer-events-none",
-          "-translate-y-2",
-          "scale-[0.92]",
-          "opacity-0",
-        );
-        panel.classList.add("translate-y-0", "scale-100", "opacity-100");
-        toggle.classList.remove(
-          "border-slate-300/90",
-          "bg-white",
-          "hover:border-imu-highlight/40",
-          "hover:bg-slate-50",
-        );
-        toggle.classList.add(
-          "border-imu-highlight/50",
-          "bg-imu-50",
-          "shadow-md",
-          "shadow-imu-brand/10",
-        );
-        icon.classList.add("rotate-90");
-      } else {
-        /* remove backdrop */
-        const backdrop = document.getElementById("menu-backdrop");
-        if (backdrop) backdrop.style.display = "none";
-
-        unlockBodyScroll();
-
-        panel.setAttribute("inert", "");
-        panel.classList.add(
-          "pointer-events-none",
-          "-translate-y-2",
-          "scale-[0.92]",
-          "opacity-0",
-        );
-        panel.classList.remove("translate-y-0", "scale-100", "opacity-100");
-        toggle.classList.add(
-          "border-slate-300/90",
-          "bg-white",
-          "hover:border-imu-highlight/40",
-          "hover:bg-slate-50",
-        );
-        toggle.classList.remove(
-          "border-imu-highlight/50",
-          "bg-imu-50",
-          "shadow-md",
-          "shadow-imu-brand/10",
-        );
-        icon.classList.remove("rotate-90");
-      }
-    };
-
-    const clearHover = () => {
-      if (hoverCloseTimer) {
-        clearTimeout(hoverCloseTimer);
-        hoverCloseTimer = null;
-      }
-    };
-
-    /* ------ toggle button ------ */
-    toggle?.addEventListener("click", () => {
-      clearHover();
-      setMenuOpen(!menuOpen);
-    });
-
-    /* ------ desktop hover ------ */
+    /* desktop hover */
     wrap?.addEventListener("mouseenter", () => {
       if (!fineHover()) return;
       clearHover();
@@ -256,30 +216,7 @@ const isEn = lang === "en";
       hoverCloseTimer = setTimeout(() => setMenuOpen(false), 160);
     });
 
-    /* ------ Escape key ------ */
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && menuOpen) setMenuOpen(false);
-    });
-
-    /* ------ click outside (via backdrop) ------ */
-    document.addEventListener(
-      "pointerdown",
-      (e) => {
-        if (!menuOpen) return;
-        const target = e.target as HTMLElement;
-        /* close if click is on backdrop or outside shell entirely */
-        if (target.id === "menu-backdrop") {
-          setMenuOpen(false);
-          return;
-        }
-        if (!shell?.contains(target)) {
-          setMenuOpen(false);
-        }
-      },
-      { capture: true },
-    );
-
-    /* ------ click nav item → close + smooth scroll ------ */
+    /* nav items */
     navItems.forEach((a) =>
       a.addEventListener("click", (e) => {
         clearHover();
@@ -289,15 +226,12 @@ const isEn = lang === "en";
           e.preventDefault();
           const id = href.split("#")[1] || "";
           history.pushState(null, "", href);
-          /* wait for body scroll unlock to settle */
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               const el = document.getElementById(id);
               if (!el) return;
               const headerH = header.getBoundingClientRect().height || 52;
-              const padTop =
-                parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) ||
-                headerH;
+              const padTop = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || headerH;
               const offset = Math.max(headerH, padTop);
               const top = el.getBoundingClientRect().top + window.scrollY - offset;
               window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
@@ -307,9 +241,7 @@ const isEn = lang === "en";
       }),
     );
 
-    /* ------ scroll / resize shadow & active section ------ */
-    const baseShadow = "shadow-sm shadow-slate-200/40";
-    const scrolledShadow = "shadow-md shadow-slate-300/35";
+    /* scroll shadow & active section */
     const updateScrollState = () => {
       const isScrolled = window.scrollY > 6;
       header.classList.toggle("shadow-md", isScrolled);
@@ -317,13 +249,9 @@ const isEn = lang === "en";
       header.classList.toggle("shadow-sm", !isScrolled);
       header.classList.toggle("shadow-slate-200/40", !isScrolled);
     };
-    updateScrollState();
-    window.addEventListener("scroll", updateScrollState, { passive: true });
-
     const updateActive = () => {
       if (location.pathname !== "/" && location.pathname !== "/en/") return;
-      const padTop =
-        parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 52;
+      const padTop = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 52;
       const y = window.scrollY + padTop;
       let current: string | null = null;
       if (window.scrollY >= 72) {
@@ -331,10 +259,7 @@ const isEn = lang === "en";
           const id = a.getAttribute("data-nav-id");
           if (!id) continue;
           const el = document.getElementById(id);
-          if (el) {
-            const top = el.getBoundingClientRect().top + window.scrollY;
-            if (top <= y) current = id;
-          }
+          if (el) { const top = el.getBoundingClientRect().top + window.scrollY; if (top <= y) current = id; }
         }
       }
       navItems.forEach((a) => {
@@ -346,10 +271,34 @@ const isEn = lang === "en";
         a.classList.toggle("ring-imu-highlight/45", active);
       });
     };
+    updateScrollState();
     updateActive();
-    window.addEventListener("scroll", updateActive, { passive: true });
-    window.addEventListener("resize", updateActive, { passive: true });
-    void baseShadow;
-    void scrolledShadow;
+    if (!scrollListenersReady) {
+      scrollListenersReady = true;
+      window.addEventListener("scroll", updateScrollState, { passive: true });
+      window.addEventListener("scroll", updateActive, { passive: true });
+      window.addEventListener("resize", updateActive, { passive: true });
+    }
   }
+
+  /* ── document-level listeners (attach once) ── */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menuOpen) setMenuOpen(false);
+  });
+  document.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (!menuOpen) return;
+      const target = e.target as HTMLElement;
+      if (target.id === "menu-backdrop") { setMenuOpen(false); return; }
+      const header = getHeader();
+      const shell = header?.querySelector<HTMLElement>("[data-shell]");
+      if (!shell?.contains(target)) setMenuOpen(false);
+    },
+    { capture: true },
+  );
+
+  /* ── run ── */
+  initSiteHeader();
+  document.addEventListener("astro:page-load", initSiteHeader);
 </script>

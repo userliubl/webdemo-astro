@@ -29,14 +29,19 @@
     localStorage.setItem(STORAGE_KEY, theme);
   };
 
-  /* apply on load before paint */
-  apply(getPref());
+  function initThemeToggle() {
+    /* re-query every time — DOM may be new after View Transitions */
+    const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+    btn?.addEventListener("click", () => {
+      const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+      apply(next);
+    });
+  }
 
-  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
-  btn?.addEventListener("click", () => {
-    const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
-    apply(next);
-  });
+  /* apply theme preference once on first load (inline script in <head> also does this) */
+  apply(getPref());
+  initThemeToggle();
+  document.addEventListener("astro:page-load", initThemeToggle);
 </script>
 
 <style is:global>
