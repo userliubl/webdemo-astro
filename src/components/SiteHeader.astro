@@ -264,14 +264,20 @@ const isEn = lang === "en";
     );
 
     /* language switches: force hard navigation for mobile/cloud hosting reliability */
-    langSwitches.forEach((a) =>
-      a.addEventListener("click", (e) => {
-        e.preventDefault();
-        clearHover();
-        // 先导航再关闭菜单，避免移动端 unlockBodyScroll 的 scrollTo 打断用户手势导致导航失效
-        window.location.assign(a.href);
-      }),
-    );
+    langSwitches.forEach((a) => {
+      // 移除之前可能的事件监听器，避免重复绑定
+      const clonedLink = a.cloneNode(true) as HTMLAnchorElement;
+      a.replaceWith(clonedLink);
+      const updatedLink = header.querySelector<HTMLAnchorElement>(`[data-lang-switch][href="${clonedLink.href}"]`);
+      if (updatedLink) {
+        updatedLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          clearHover();
+          // 直接导航，不关闭菜单（导航会重新加载页面）
+          window.location.href = updatedLink.href;
+        });
+      }
+    });
 
     /* scroll shadow & active section */
     const updateScrollState = () => {
